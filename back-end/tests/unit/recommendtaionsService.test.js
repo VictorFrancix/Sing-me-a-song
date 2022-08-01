@@ -178,6 +178,57 @@ describe("Get recommendations tests suites", () => {
         expect(promise).rejects.toEqual({ type: "not_found", message: "" });
     });
 }
-)
+);
+
+describe("Get recommendations tests", () => {
+    it("Should return a list of recommendations", async () => {
+        const recommendation =
+            recommendationsFactory.createRecommendation();
+        jest.spyOn(recommendationRepository, "findAll").mockResolvedValueOnce([
+            recommendation,
+        ]);
+
+        const response = await recommendationService.get();
+
+        expect(response).toEqual([recommendation]);
+        expect(recommendationRepository.findAll).toHaveBeenCalledTimes(1);
+    });
+
+    it("Given a valid id, should return a recommendation", async () => {
+        const recommendationData = recommendationsFactory.createRecommendation();
+        recommendationData.id = 1;
+        jest.spyOn(recommendationRepository, "find").mockResolvedValueOnce(recommendationData);
+
+        const response = await recommendationService.getById(1);
+
+        expect(response).toEqual(recommendationData);
+        expect(recommendationRepository.find).toHaveBeenCalledTimes(1);
+    })
+
+    it("Given an id that doesn't exist, should return a not found error", async () => {
+        jest.spyOn(recommendationRepository, "find").mockResolvedValueOnce(null);
+
+        const promise = recommendationService.getById(1);
+        expect(promise).rejects.toEqual({ type: "not_found", message: ""});
+    })
+});
+
+describe("Get top amount recommendations tests", () => {
+    it("Should return a list of amount recommendations", async () => {
+        const recommendations = [];
+        const amount = 6;
+        for(let i = 0; i < amount; i++){
+            const recommendationData = recommendationsFactory.createRecommendation();
+            recommendations.push(recommendationData);
+        };
+
+        jest.spyOn(recommendationRepository, "getAmountByScore").mockResolvedValueOnce(recommendations);
+
+        const response = await recommendationService.getTop(amount);
+        
+        expect(response).toEqual(recommendations);
+        expect(recommendationRepository.getAmountByScore).toHaveBeenCalledTimes(1);
+    })
+});
 
 
