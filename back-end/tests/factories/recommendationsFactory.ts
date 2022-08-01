@@ -24,3 +24,15 @@ export async function insertRecommendation(recommendation: Recommendation) {
     return recommendationCreated;
 }
 
+export async function inserManyRecommendations(number : number) {
+    const recommendations = [];
+    for (let i = 0; i < number; i++) {
+        const recommendation = createRecommendation();
+        recommendations.push(recommendation);
+    }
+    
+    const recommendationsCreated = await prisma.recommendation.createMany({
+        data: recommendations
+    });
+}
+
