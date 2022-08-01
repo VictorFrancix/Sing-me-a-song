@@ -14,7 +14,6 @@ export function createRecommendation() {
         name: faker.music.songName(),
         youtubeLink: `www.youtube.com/watch?v=${faker.random.alphaNumeric()}`,
     }
-    console.log(recommendation);
     return recommendation;
 }
 
