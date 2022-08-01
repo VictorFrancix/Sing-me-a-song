@@ -99,3 +99,27 @@ describe("🚀 - GET /recommendations/random tests", () => {
     )
 }
 )
+
+describe("🚀 - GET /recommendations/top/:amount tests", () => {
+    it("🪐 200 - should return the top amount of recommendations", async () => {
+        await recommendationsFactory.inserManyRecommendations(11)
+
+        for(let i = 1; i <= 11; i++){
+            await recommendationsFactory.updateScore(i)
+        }
+
+        const response = await supertest(app).get("/recommendations/top/5");
+
+        const top5 = await prisma.recommendation.findMany({
+            take: 5,
+            orderBy: {
+                score: "desc"
+            }
+        });
+
+        expect(response.body).toEqual(top5);
+        expect(response.status).toBe(200);
+    }
+    )
+}
+)

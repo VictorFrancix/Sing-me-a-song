@@ -30,9 +30,21 @@ export async function inserManyRecommendations(number : number) {
         const recommendation = createRecommendation();
         recommendations.push(recommendation);
     }
-    
+
     const recommendationsCreated = await prisma.recommendation.createMany({
         data: recommendations
     });
 }
 
+export async function updateScore(id:number){
+    const score = Math.floor(Math.random() * 100);
+    const recommendation = await prisma.recommendation.update({
+        where: {
+            id
+        },
+        data: {
+            score
+        }
+    });
+    return recommendation;
+}
