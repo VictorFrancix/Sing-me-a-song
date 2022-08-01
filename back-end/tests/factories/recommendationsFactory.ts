@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { func } from 'joi';
 import { prisma } from '../../src/database.js';
 
 
@@ -13,6 +14,7 @@ export function createRecommendation() {
         name: faker.music.songName(),
         youtubeLink: `www.youtube.com/watch?v=${faker.random.alphaNumeric()}`,
     }
+    console.log(recommendation);
     return recommendation;
 }
 
