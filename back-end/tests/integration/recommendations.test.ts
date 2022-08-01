@@ -61,9 +61,9 @@ describe ("🚀 - GET /recommendations/:id tests", () => {
         const response = await supertest(app)
             .get(`/recommendations/${recommendationCreated.id}`);
 
-        expect(response.body.id).toBe(recommendationCreated.id);
-        expect(response.body.name).toBe(recommendationCreated.name);
-        expect(response.body.youtubeLink).toBe(recommendationCreated.youtubeLink);
+        const objectKeys = ["id", "name", "youtubeLink", "score"];
+
+        expect(Object.keys(response.body)).toEqual(objectKeys);
         expect(response.status).toBe(200);
     }
     )
@@ -79,6 +79,22 @@ describe ("🚀 - GET /recommendations/:id tests", () => {
             .get(`/recommendations/a`);
 
         expect(response.status).toBe(500);
+    }
+    )
+}
+)
+
+describe("🚀 - GET /recommendations/random tests", () => {
+    it("🪐 200 - should return a random recommendation", async () => {
+        const recommendationData = recommendationsFactory.inserManyRecommendations(11)
+        
+        const response = await supertest(app)
+            .get("/recommendations/random");
+
+        const objectKeys = ["id", "name", "youtubeLink", "score"];
+
+        expect(response.status).toBe(200);
+        expect(Object.keys(response.body)).toEqual(objectKeys);
     }
     )
 }
