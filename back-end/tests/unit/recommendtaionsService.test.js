@@ -169,13 +169,15 @@ describe("Get recommendations tests suites", () => {
         expect(recommendationRepository.findAll).toHaveBeenCalledTimes(1);
     });
 
-    it("Should throw a not found error when there are no recommendations", () => {
-        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(
-            () => []
-        );
+    it("error notfound in get random", async () => {
+      jest
+        .spyOn(recommendationRepository, "findAll")
+        .mockResolvedValue([]);
 
-        const promise = recommendationService.getRandom();
-        expect(promise).rejects.toEqual({ type: "not_found", message: "" });
+      const result = recommendationService.getRandom();
+
+      expect(result).rejects.toHaveProperty("type", "not_found");
+      expect(recommendationRepository.findAll).toBeCalled();
     });
 }
 );
