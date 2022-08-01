@@ -123,3 +123,83 @@ describe("🚀 - GET /recommendations/top/:amount tests", () => {
     )
 }
 )
+
+describe("🚀 - POST /recommendations/:id/upvote tests", () => {
+    it("🪐 200 - should upvote the recommendation with the given id", async () => {
+        const recommendationData = recommendationsFactory.createRecommendation();
+        await recommendationsFactory.insertRecommendation(recommendationData);
+
+        const recommendationInfoInitial = await recommendationsFactory.getRecommendation(recommendationData.name);
+
+        const response = await supertest(app).post(`/recommendations/${recommendationInfoInitial.id}/upvote`);
+
+        const recommendationInfoFinal = await recommendationsFactory.getRecommendation(recommendationData.name);
+        expect(response.status).toBe(200);
+        expect(recommendationInfoFinal.score).toBe(recommendationInfoInitial.score + 1);
+        }
+    );
+    it("🪐 404 - should return a not found error if the recommendation does not exist", async () => {
+        const response = await supertest(app).post(`/recommendations/1/upvote`);
+
+        expect(response.status).toBe(404);
+        }
+    );
+    it("🪐 500 - should return an internal server error if the id is not a number", async () => {
+        const response = await supertest(app).post(`/recommendations/a/upvote`);
+
+        expect(response.status).toBe(500);
+        }
+    );
+    }
+);
+
+describe("🚀 - POST /recommendations/:id/downvote tests", () => {
+    it("🪐 200 - should downvote the recommendation with the given id", async () => {
+        const recommendationData = recommendationsFactory.createRecommendation();
+        await recommendationsFactory.insertRecommendation(recommendationData);
+
+        const recommendationInfoInitial = await recommendationsFactory.getRecommendation(recommendationData.name);
+
+        const response = await supertest(app).post(`/recommendations/${recommendationInfoInitial.id}/downvote`);
+
+        const recommendationInfoFinal = await recommendationsFactory.getRecommendation(recommendationData.name);
+        expect(response.status).toBe(200);
+        expect(recommendationInfoFinal.score).toBe(recommendationInfoInitial.score - 1);
+        }
+    );
+    it("🪐 200 - If the score is less than -5, should return 200 and delete the recomendation", async () => {
+        const recommendationData = recommendationsFactory.createRecommendation();
+
+        const recommendationDataLess = {...recommendationData, score: -5};
+
+        await recommendationsFactory.insertRecommendation(recommendationDataLess);
+
+        const recommendationInfoInitial = await recommendationsFactory.getRecommendation(recommendationDataLess.name);
+
+        const response = await supertest(app).post(`/recommendations/${recommendationInfoInitial.id}/downvote`);
+
+        const recommendationInfoFinal = await recommendationsFactory.getRecommendation(recommendationDataLess.name);
+
+        expect(response.status).toBe(200);
+        expect(recommendationInfoFinal).toBe(null);
+        }
+    );
+
+
+    
+    
+        it("🪐 404 - should return a not found error if the recommendation does not exist", async () => {
+        const response = await supertest(app).post(`/recommendations/1/downvote`);
+
+        expect(response.status).toBe(404);
+        }
+    );
+    it("🪐 500 - should return an internal server error if the id is not a number", async () => {
+        const response = await supertest(app).post(`/recommendations/a/downvote`);
+
+        expect(response.status).toBe(500);
+        }
+    );
+
+    }
+);

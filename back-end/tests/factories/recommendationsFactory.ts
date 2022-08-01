@@ -5,6 +5,7 @@ import { prisma } from '../../src/database.js';
 interface Recommendation {
     name: string;
     youtubeLink: string;
+    score?: number;
 }
 
 export function createRecommendation() {
@@ -46,5 +47,15 @@ export async function updateScore(id:number){
             score
         }
     });
+    return recommendation;
+}
+
+export async function getRecommendation(name: string){
+    const recommendation = await prisma.recommendation.findFirst({
+        where: {
+            name
+        }
+    });
+
     return recommendation;
 }
